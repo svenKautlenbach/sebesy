@@ -7,12 +7,10 @@
 
 namespace seb
 {
-	constexpr uint64_t MISSING_DOC_NR = 0;
-
 	struct Entry
 	{
 		std::string clientAccount;
-		uint64_t documentNumber; // Equals MISSING_DOC_NR if none exists.
+		std::string documentNumber;
 		std::time_t date;
 		std::string participantAccount;
 		std::string participantName;

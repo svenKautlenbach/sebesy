@@ -1,23 +1,36 @@
 #include "esy.h"
 
-#include <string_view>
+#include <iomanip>
 
-using namespace std::string_view_literals;
 namespace
 {
-	constexpr std::string_view SEPARATOR = ";"sv;
+	constexpr char SEPARATOR = ';';
 }
 
 namespace esy
 {
 	std::vector<Record> convertSebEntries(const std::vector<seb::Entry>& input)
 	{
-		(void)input;
-		return std::vector<Record>{};
+		std::vector<Record> rs;
+		for (const auto& se : input)
+		{
+			Record r;
+			char usFormat[100];
+			std::strftime(usFormat, 100, "%m/%e/%Y", std::localtime(&se.date));
+			r.usDate = std::string(usFormat);
+			r.amount = se.amount;
+			r.typeB = "B";
+			r.typeA = "A";
+			r.article = se.comment;
+			rs.push_back(r);
+		}
+
+		return rs;
 	}
 
 	void printCsv(const std::vector<Record>& input, std::ostream& stream)
 	{
+		stream << std::fixed << std::setprecision(2);
 		for (const auto& record : input)
 		{
 			stream << record.usDate << SEPARATOR
