@@ -2,8 +2,11 @@
 
 #include <array>
 #include <fstream>
-#include <sstream>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
+
+#include "utilities.h"
 
 namespace
 {
@@ -34,8 +37,13 @@ namespace
 
 	std::time_t toTimeT(const std::string& timestamp)
 	{
-		(void)timestamp;
-		return std::time(nullptr);
+		std::string formatted = timestamp;
+		utilities::replaceContent(formatted, "\"", "");
+		std::istringstream ss(formatted);
+		std::tm t{};
+		ss >> std::get_time(&t, "%d.%m.%Y");
+
+		return std::mktime(&t);
 	}
 }
 
@@ -56,9 +64,14 @@ namespace seb
 				break;
 
 			const auto& items = getItems(l);
+			std::string amount = items[8];
+			utilities::replaceContent(amount, ",", ".");
+			std::string description = items[11];
+			utilities::replaceContent(description, "\"", "");
+
 			Entry e{items[0], items[1], toTimeT(items[2]), items[3], items[4],
-							   items[5], items[6], items[7], std::stof(items[8]), items[9], items[10],
-							   items[11], std::stof(items[12]), items[13], (items.size() == 15 ? items[14] : "")};
+							   items[5], items[6], items[7], std::stof(amount), items[9], items[10],
+							   description, std::stof(items[12]), items[13], (items.size() == 15 ? items[14] : "")};
 			entries.push_back(e);
 		}
 

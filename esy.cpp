@@ -16,11 +16,14 @@ namespace esy
 		{
 			Record r;
 			char usFormat[100];
-			std::strftime(usFormat, 100, "%m/%e/%Y", std::localtime(&se.date));
+			std::strftime(usFormat, 100, "%m/%d/%Y", std::localtime(&se.date));
 			r.usDate = std::string(usFormat);
-			r.amount = se.amount;
-			r.typeB = "B";
-			r.typeA = "A";
+			if (se.nationalId.empty())
+				r.amount = -1 * se.amount;
+			else
+				r.amount = se.amount;
+			r.typeB = "";
+			r.typeA = "";
 			r.article = se.comment;
 			rs.push_back(r);
 		}
@@ -40,7 +43,7 @@ namespace esy
 
 			const auto& a = record.amount;
 			if (a < 0)
-				stream << a << SEPARATOR << 0;
+				stream << -1 * a << SEPARATOR << 0;
 			else
 				stream << 0 << SEPARATOR << a;
 
