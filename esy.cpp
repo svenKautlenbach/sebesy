@@ -5,6 +5,7 @@
 namespace
 {
 	constexpr char SEPARATOR = ';';
+
 }
 
 namespace esy
@@ -24,7 +25,15 @@ namespace esy
 				r.amount = se.amount;
 			r.typeB = "";
 			r.typeA = "";
-			r.article = se.comment;
+			if (se.participantName == std::string("SEB"))
+			{
+				CommentData comment(se.comment);
+				r.article = comment.article();
+			}
+			else
+			{
+				r.article = se.comment;
+			}
 			rs.push_back(r);
 		}
 
@@ -49,6 +58,44 @@ namespace esy
 
 			stream << SEPARATOR << std::endl;
 		}
+	}
+
+	CommentData::CommentData(const std::string &input) : m_article(input)
+	{
+		auto transactionStart = m_article.find_last_of("#");
+		if (transactionStart == std::string::npos)
+			return;
+
+		auto kaartStart = m_article.find("kaart...");
+		if (kaartStart == std::string::npos)
+			return;
+
+		m_article = m_article.substr(kaartStart + 8 + 6 + 1, transactionStart - kaartStart - 8 - 6 - 1);
+	}
+
+	std::string CommentData::article()
+	{
+		return m_article;
+	}
+
+	time_t CommentData::time()
+	{
+		throwIfMissing();
+
+		return m_time;
+	}
+
+	uint32_t CommentData::transaction()
+	{
+		throwIfMissing();
+
+		return m_transaction;
+	}
+
+	void CommentData::throwIfMissing()
+	{
+		if (m_transaction == 0)
+			throw std::runtime_error("SEB comment did not include transaction details.");
 	}
 }
 

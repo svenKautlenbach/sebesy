@@ -27,7 +27,11 @@ namespace
 		std::istringstream ss(line);
 		std::vector<std::string> items;
 		for (std::array<char, 200> item; ss.getline(&item[0], 200, ';');)
-			items.push_back(std::string(item.data()));
+		{
+			auto itemData = std::string(item.data());
+			utilities::replaceContent(itemData, "\"", "");
+			items.push_back(itemData);
+		}
 
 		if (items.size() < 14)
 			throw std::runtime_error("Data does not have correct count of items on one record.");
@@ -37,13 +41,10 @@ namespace
 
 	std::time_t toTimeT(const std::string& timestamp)
 	{
-		std::string formatted = timestamp;
-		utilities::replaceContent(formatted, "\"", "");
-		std::istringstream ss(formatted);
-		std::tm t{};
-		ss >> std::get_time(&t, "%d.%m.%Y");
+		std::string stripped = timestamp;
+		utilities::replaceContent(stripped, "\"", "");
 
-		return std::mktime(&t);
+		return utilities::convertEstDate(stripped);
 	}
 }
 
