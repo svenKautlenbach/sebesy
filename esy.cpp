@@ -1,5 +1,6 @@
 #include "esy.h"
 
+#include <algorithm>
 #include <iomanip>
 
 namespace
@@ -25,7 +26,12 @@ namespace esy
 				r.amount = se.amount;
 			r.typeB = "";
 			r.typeA = "";
-			if (se.participantName == std::string("SEB"))
+			// Comment value has bill or reference number, so lets use the participant
+			if (static_cast<size_t>(std::count_if(se.comment.cbegin(), se.comment.cend(), [](unsigned char c){ return std::isdigit(c) || c == ' '; } )) == se.comment.length())
+			{
+				r.article = se.participantName;
+			}
+			else if (se.participantName == std::string("SEB"))
 			{
 				CommentData comment(se.comment);
 				r.article = comment.article();
