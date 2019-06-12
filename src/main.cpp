@@ -20,6 +20,8 @@ int main(int argc, char* argv[])
 	const auto records = std::string(argv[1]);
 	try
 	{
+	    // 1st - fetch bank
+	    // 2nd - verify against bank
 		const auto& entries = seb::getEntriesFromCsv(records);
 		const auto& esyRecords = esy::convertSebEntries(entries);
 		esy::printCsv(esyRecords);

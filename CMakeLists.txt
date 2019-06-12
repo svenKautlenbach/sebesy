@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
-
+cmake_minimum_required(VERSION 3.11)
 
 project(sebesy LANGUAGES CXX)
 
@@ -17,17 +16,21 @@ else()
     message(FATAL_ERROR " Unsupported compiler: " ${CMAKE_CXX_COMPILER_ID})
 endif()
 
+
 include(${CMAKE_CURRENT_LIST_DIR}/src/CMakeLists.txt)
 
-add_executable(sebesy ${_sources})
+add_executable(sebesy ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp)
 set_target_properties(sebesy
         PROPERTIES
-        CXX_STANDARD 14
-        CXX_EXTENSIONS OFF
-        CXX_STANDARD_REQUIRED ON
-        POSITION_INDEPENDENT_CODE 1
+            CXX_STANDARD 14
+            CXX_EXTENSIONS OFF
+            CXX_STANDARD_REQUIRED ON
+            POSITION_INDEPENDENT_CODE 1
         )
-target_include_directories(sebesy PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+target_include_directories(sebesy PUBLIC ${CMAKE_CURRENT_LIST_DIR}/src/include)
 target_compile_options(sebesy PRIVATE ${_compile_options})
+target_link_libraries(sebesy sebesy-static)
 
+target_compile_options(sebesy-objs PRIVATE ${_compile_options})
 
+include(${CMAKE_CURRENT_LIST_DIR}/test/CMakeLists.txt)
