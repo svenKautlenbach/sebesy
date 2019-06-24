@@ -41,19 +41,23 @@ endif()
 add_executable(sebesy-tests "")
 target_sources(sebesy-tests
         PRIVATE
+            ${CMAKE_CURRENT_LIST_DIR}/iban_test.cpp
             ${CMAKE_CURRENT_LIST_DIR}/bank_source_test.cpp
         )
 set_target_properties(sebesy-tests
         PROPERTIES
-            CMAKE_CXX_STANDARD 11
+            CMAKE_CXX_STANDARD 14
             CMAKE_CXX_EXTENSIONS OFF
             CMAKE_CXX_STANDARD_REQUIRED ON
             CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON
         )
 target_link_libraries(sebesy-tests
         PRIVATE
+            gmock
             gtest_main
+            sebesy-objs
         )
+target_include_directories(sebesy-tests PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../src/include)
 
 enable_testing()
 
